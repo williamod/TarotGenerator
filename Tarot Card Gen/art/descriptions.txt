@@ -1,4 +1,4 @@
-the fool = potential, innocence, new journey
+fool = potential, innocence, new journey
 
 magician = manifestation, creation, conduit
 

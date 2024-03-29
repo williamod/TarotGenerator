@@ -3,6 +3,7 @@ import sys
 from settings import *
 from run import *
 import asyncio
+
  
 
 
@@ -27,7 +28,6 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     pass
                 
-            self.screen.fill('black')   
             self.run.update(self.screen)
             pygame.display.update()
             self.clock.tick(FPS)
@@ -41,27 +41,3 @@ if __name__ == '__main__':
             
 
 
-class Game:
-    def __init__(self):
-         # setup
-        pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH,HEIGHT))
-        pygame.display.set_caption('')
-        self.clock = pygame.time.Clock()
-        self.run = Run()
-
-        
-    
-    async def main(self):   
-        while True:
-            # event loop
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    pass
-                
-            self.screen.fill('black')   
-            self.run.update()
-            pygame.display.update()
