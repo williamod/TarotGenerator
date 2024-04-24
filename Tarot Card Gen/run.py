@@ -10,45 +10,110 @@ from debug import *
 
 class Run:
     def __init__(self):
-        self.display_surf = pygame.display.get_surface()
+
         self.cover_card_group = pygame.sprite.Group()
         self.face_card_group = pygame.sprite.Group()
+        self.text_group = pygame.sprite.Group()
+        self.title_group = pygame.sprite.Group()
 
-        self.card_cover = CoverCard(self.cover_card_group)
+        self.cover_card = CoverCard(self.cover_card_group)
+        self.card_drawn = False
 
-
-        self.picks = sample(range(0,21), 3)
-        self.card_1 = FaceCard(self.face_card_group, self.picks[0], (WIDTH/2,0))
-        self.card_2 = FaceCard(self.face_card_group, self.picks[1], (self.card_1.rect.right + 10,0))
-        self.card_3 = FaceCard(self.face_card_group, self.picks[2], (self.card_2.rect.right + 10,0))
+        self.picks = [2,10,14]
+        
 
         self.bg_1 = pygame.transform.scale(pygame.image.load('background/1.png'), (WIDTH,HEIGHT))
         self.bg_3 = pygame.transform.scale(pygame.image.load('background/3.png'), (WIDTH,HEIGHT))
         self.bg_4 = pygame.transform.scale(pygame.image.load('background/4.png'), (WIDTH,HEIGHT))
+
+    def input(self):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_SPACE]:
+            self.empty_all()
+            self.create_face_cards()
+            self.create_text_description()
+            self.create_titles()
+
+        if key[pygame.K_F1] and self.card_drawn:
+            self.fold_out_all()
         
     def draw_background(self, screen):
         screen.blit(self.bg_1, (0,0))
         screen.blit(self.bg_3, (0,0))
-        screen.blit(self.bg_4, (0,0))
+        screen.blit(self.bg_4, (0,0))        
+            
+    def create_face_cards(self):
+        self.picks = sample(range(0,21), 3)
+        self.card_1 = FaceCard(self.face_card_group, self.picks[0], (CENTER[0]*0.5, CENTER[1]))
+        self.card_2 = FaceCard(self.face_card_group, self.picks[1], CENTER)
+        self.card_3 = FaceCard(self.face_card_group, self.picks[2], (CENTER[0]*1.5, CENTER[1]))
+        self.card_drawn = True
 
+    def create_text_description(self):
+        self.desc1_1 = Text(self.text_group, cards[self.picks[0]]['desc'][0], self.card_1.rect.center,(0,0))
+        self.desc1_2 = Text(self.text_group, cards[self.picks[0]]['desc'][1], self.card_1.rect.center,(0,1))
+        self.desc1_3 = Text(self.text_group, cards[self.picks[0]]['desc'][2], self.card_1.rect.center,(0,2))
+
+        self.desc2_1 = Text(self.text_group, cards[self.picks[1]]['desc'][0], self.card_2.rect.center,(1,0))
+        self.desc2_2 = Text(self.text_group, cards[self.picks[1]]['desc'][1], self.card_2.rect.center,(1,1))
+        self.desc2_3 = Text(self.text_group, cards[self.picks[1]]['desc'][2], self.card_2.rect.center,(1,2))
+
+        self.desc3_1 = Text(self.text_group, cards[self.picks[2]]['desc'][0], self.card_3.rect.center,(2,0))
+        self.desc3_2 = Text(self.text_group, cards[self.picks[2]]['desc'][1], self.card_3.rect.center,(2,1))
+        self.desc3_3 = Text(self.text_group, cards[self.picks[2]]['desc'][2], self.card_3.rect.center,(2,2))
+        
+    def create_titles(self):
+        self.title_1 = Text(self.title_group, cards[self.picks[0]]['name'], self.card_1.rect.center, type = 'name')
+        self.title_2 = Text(self.title_group, cards[self.picks[1]]['name'], self.card_2.rect.center, type = 'name')
+        self.title_3 = Text(self.title_group, cards[self.picks[2]]['name'], self.card_3.rect.center, type = 'name')
+
+    def empty_all(self):
+        self.cover_card_group.empty()
+        self.face_card_group.empty()
+        self.text_group.empty()
+        self.title_group.empty()
+
+
+    def fold_out_all(self):
+        for card in self.face_card_group:
+            while not card.folded_out:
+                card.fold_out()
 
     def update(self, screen):
+        self.input()
         #update
-        self.cover_card_group.update()
-        self.face_card_group.update()
+        if self.cover_card_group:
+            self.cover_card_group.update()
+        if self.face_card_group:
+            self.face_card_group.update()
         #draw
         self.draw_background(screen)
         self.cover_card_group.draw(screen)
         self.face_card_group.draw(screen)
 
+        self.text_group.draw(screen)
+        self.title_group.draw(screen)
 
 
+
+
+
+
+
+        #DEBUG
+
+        #FACE CARD INFO
+        if self.picks:
+            debug((cards[self.picks[0]]['name'],cards[self.picks[1]]['name'],cards[self.picks[2]]['name']), 'Cards',0)
+        # debug(cards[self.picks[0]]['desc'], '1', 1)
+        # debug(cards[self.picks[1]]['desc'], '2', 2)
+        # debug(cards[self.picks[2]]['desc'], '3', 3)
         
-        debug((cards[self.picks[0]]['name'],cards[self.picks[1]]['name'],cards[self.picks[2]]['name']), 'Cards',1)
-        debug(cards[self.picks[0]]['desc'], '1', 2)
-        debug(cards[self.picks[1]]['desc'], '2', 3)
-        debug(cards[self.picks[2]]['desc'], '3', 4)
-        
-        debug(self.card_cover.rect.width, 'Cover Width', 5)
-        debug(self.card_cover.flips, 'Flips', 6)
+
+        #COVER CARD DATA
+        #debug(self.card_cover.rect.width, 'Cover Width', 5)
+        #debug(self.card_cover.flips, 'Flips', 6)
+
+        #TIMER
+        #debug(self.card_1.fold_out(), 'Timer', 0 )
         

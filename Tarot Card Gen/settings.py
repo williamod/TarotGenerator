@@ -1,10 +1,14 @@
 #game setup
-WIDTH    = 1280	
-HEIGHT   = 720
-FPS      = 60
+size    = 2
+HEIGHT  = 360 * size
+WIDTH   = round(HEIGHT*1.77778)
+FPS     = 60
+CENTER  = (WIDTH/2,HEIGHT/2)
 
-card_width = 120
-card_height = 160
+card_width = 120*size
+card_height = 160*size
+
+
 
 cards = {
     0 : {'name':'fool','desc':['potential', 'innocence', 'new journey'], 'path' : 'art/fool.png'},
@@ -30,3 +34,16 @@ cards = {
     20: {'name': 'judgement', 'desc': ['revelation', 'forgiveness', 'acceptance'], 'path': 'art/judgement.png'},
     21: {'name': 'world', 'desc': ['completion', 'wholeness', 'infinity'], 'path': 'art/world.png'}
 }
+
+
+
+
+
+
+
+# SCREEN DIMENSIONS
+# 360p:     640x360    x1
+# 720p:     1280x720   x2
+# 1080p:    1920X1080  x3
+# 1440p:    2560x1440  x4
+# 2160p:    3840x2160  x6

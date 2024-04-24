@@ -15,6 +15,7 @@ class Game:
         pygame.display.set_caption('')
         self.clock = pygame.time.Clock()
         self.run = Run()
+        
 
         
     

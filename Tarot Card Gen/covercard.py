@@ -9,18 +9,23 @@ class CoverCard(pygame.sprite.Sprite):
         self.height = card_height
         self.turn = 1
         self.flips = 0
-        
+        self.image_original = pygame.image.load('art/back.png')
+        self.image = pygame.transform.scale(self.image_original, (card_width, card_height))
+        self.rect = pygame.Surface.get_rect(self.image, center = (CENTER))
+        self.time = 0
         
 
 
     def card_cover_animation(self):
-        time = pygame.time.get_ticks()
         surf = pygame.image.load('art/back.png')
-        surf = pygame.transform.scale(surf, (abs((math.cos(time/1000)))*self.width, self.height))
+        surf = pygame.transform.scale(surf, (abs((math.cos(self.time*.05)))*self.width, self.height))
         surf_flip = pygame.transform.flip(surf, True, False)
         rect = pygame.Surface.get_rect(surf, center = (WIDTH/2, HEIGHT/2))
+        self.time += 1
         
-        if (abs((math.cos(time/1000))*100)) < 2.15:
+        
+        
+        if self.rect.width <= 5:
             self.turn *=  -1
             self.flips += 1
             
@@ -33,17 +38,15 @@ class CoverCard(pygame.sprite.Sprite):
             self.rect = rect
 
         
-
-
+    
 
 
 
 
     def update(self):
         self.card_cover_animation()
+        
 
         
 
 
-#try drawing with groupsingle 
-#look into sprite drawing methods
