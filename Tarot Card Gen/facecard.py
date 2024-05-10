@@ -12,7 +12,7 @@ class FaceCard(pygame.sprite.Sprite):
         self.height = card_height
         self.pick = pick
         self.alpha = 255
-        self.folded_out = False
+
 
 
         self.image_original = pygame.image.load(cards[pick]['path']).convert()
@@ -30,9 +30,27 @@ class FaceCard(pygame.sprite.Sprite):
             self.width += 20
             self. image = pygame.transform.scale(self.image_original, (self.width,self.height))
             self.rect = self.image.get_rect(center = self.rect.center)
+
+
+    def fold_in(self):
+        if self.width > 0:
+            self.width -= 10
+            self. image = pygame.transform.scale(self.image_original, (self.width,self.height))
+            self.rect = self.image.get_rect(center = self.rect.center)
         else:
-            self.folded_out = True
-        
+            self.kill()
+
+    def left_retun(self):
+        if self.rect.centerx < CENTER[0]:
+            self.rect.centerx += 6
+        else:
+            self.kill()
+    
+    def right_retun(self):
+        if self.rect.centerx > CENTER[0]:
+            self.rect.centerx -= 6
+        else:
+            self.kill()
 
 
             
