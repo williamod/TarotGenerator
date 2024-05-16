@@ -22,8 +22,6 @@ class CoverCard(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image_original, (self.width, card_height))
         self.rect = pygame.Surface.get_rect(self.image, center = (CENTER))
         
-
-
         #self.active = False
         self.animation_complete = False
 
@@ -38,8 +36,7 @@ class CoverCard(pygame.sprite.Sprite):
             self.left_retun,
             self.right_retun
             ]
-
-        
+   
     def fold_in(self):
         if self.width > 0:
             self.width -= 10
@@ -54,8 +51,6 @@ class CoverCard(pygame.sprite.Sprite):
             width += 10
             self. image = pygame.transform.scale(self.image_original, (width,self.height))
             self.rect = self.image.get_rect(center = self.rect.center)
-
-        
 
     def idle_flip(self):
         surf = pygame.image.load('art/back.png')

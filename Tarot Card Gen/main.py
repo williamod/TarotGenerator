@@ -15,10 +15,7 @@ class Game:
         pygame.display.set_caption('')
         self.clock = pygame.time.Clock()
         self.run = Run()
-        
 
-        
-    
     async def main(self):   
         while True:
             # event loop
@@ -35,7 +32,6 @@ class Game:
             await asyncio.sleep(0)
             
     
-
 if __name__ == '__main__':
         game = Game()
         asyncio.run(game.main())

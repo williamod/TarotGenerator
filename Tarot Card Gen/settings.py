@@ -35,6 +35,16 @@ cards = {
     21: {'name': 'world', 'desc': ['completion', 'wholeness', 'infinity'], 'path': 'art/world.png'}
 }
 
+sounds = {
+    'appear'    :   ['sound/appear.wav','sound/appear1.wav','sound/appear2.wav','sound/appear3.wav'],
+    'begin'     :   'sound/begin.wav',
+    'intro'     :   'sound/intro.wav',
+    'main'      :   'sound/main.wav',
+    'move'      :   'sound/move.wav',
+    'text'      :   'sound/text/wav' 
+
+}
+
 
 
 
