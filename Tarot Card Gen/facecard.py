@@ -12,7 +12,7 @@ class FaceCard(pygame.sprite.Sprite):
         self.height = card_height
         self.pick = pick
         self.alpha = 255
-        self.image_original = pygame.image.load(cards[pick]['path']).convert()
+        self.image_original = pygame.image.load(cards[pick]['path']).convert_alpha()
         self.image = pygame.transform.scale(self.image_original,(self.width,self.height))
         self.rect = self.image.get_rect(center = (pos))
 

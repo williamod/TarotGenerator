@@ -2,7 +2,7 @@
 size    = 2
 HEIGHT  = 360 * size
 WIDTH   = round(HEIGHT*1.77778)
-FPS     = 60
+FPS     = 30
 CENTER  = (WIDTH/2,HEIGHT/2)
 
 card_width = 120*size
@@ -45,6 +45,10 @@ sounds = {
 
 }
 
+volume = {
+    'music' : 0.5,
+    'fx' : 0.5
+}
 
 
 

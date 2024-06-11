@@ -1,5 +1,6 @@
 import pygame
-from random import sample, choice
+from random import sample, choice, seed
+import time
 from facecard import FaceCard
 from covercard import CoverCard
 from text import Text
@@ -11,6 +12,9 @@ from debug import *
 
 class Run:
     def __init__(self):
+        #random seed
+        seed(time.time())
+
         #sprite groups
         self.cover_card_group = pygame.sprite.Group()
         self.face_card_group = pygame.sprite.Group()
@@ -29,13 +33,13 @@ class Run:
         self.spacebar = Text(self.tarot_title_group, '', 0, type = 'spacebar')
 
         #background images
-        self.bg_1 = pygame.transform.scale(pygame.image.load('background/1.png'), (WIDTH,HEIGHT))
-        self.bg_3 = pygame.transform.scale(pygame.image.load('background/3.png'), (WIDTH,HEIGHT))
-        self.bg_4 = pygame.transform.scale(pygame.image.load('background/4.png'), (WIDTH,HEIGHT))
+        self.bg_1 = pygame.transform.scale(pygame.image.load('background/1.png').convert_alpha(), (WIDTH,HEIGHT))
+        self.bg_3 = pygame.transform.scale(pygame.image.load('background/3.png').convert_alpha(), (WIDTH,HEIGHT))
+        self.bg_4 = pygame.transform.scale(pygame.image.load('background/4.png').convert_alpha(), (WIDTH,HEIGHT))
 
         #music
         pygame.mixer.music.load(sounds['intro'])
-        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.set_volume(volume['music'])
         pygame.mixer.music.play(-1)
 
         #sound
@@ -48,14 +52,16 @@ class Run:
                              pygame.mixer.Sound('sound/appear3.wav')]
         
         #sound volume
-        self.flip_sound.set_volume(0.5)
-        self.book_flip_sound.set_volume(0.3)
-        self.begin_sound.set_volume(0.3)
-        self.appear_sound[0].set_volume(0.30)
-        self.appear_sound[1].set_volume(0.30)
-        self.appear_sound[2].set_volume(0.20)
-        self.appear_sound[3].set_volume(0.30)
+        
+        self.flip_sound.set_volume(volume['fx'])
+        self.book_flip_sound.set_volume(volume['fx'])
+        self.begin_sound.set_volume(volume['fx'])
+        self.appear_sound[0].set_volume(volume['fx'])
+        self.appear_sound[1].set_volume(volume['fx'])
+        self.appear_sound[2].set_volume(volume['fx'])
+        self.appear_sound[3].set_volume(volume['fx'])
 
+        
     def input(self):
         key = pygame.key.get_pressed()
         if key[pygame.K_SPACE] and self.animating == 0 and self.moon.image.get_alpha() == 255:
@@ -201,7 +207,7 @@ class Run:
             if not self.tarot_title_group:
                 self.spacebar = Text(self.tarot_title_group, '', 0, type = 'spacebar')
                 pygame.mixer.music.load(sounds['main'])
-                pygame.mixer.music.set_volume(0.1)
+                pygame.mixer.music.set_volume(volume['music'])
                 pygame.mixer.music.play(-1)
             else: 
                 self.spacebar.appear()
@@ -230,7 +236,6 @@ class Run:
         
 
     def update(self, screen):
-        
         self.input()
         if self.animating == 0:
             self.show_game_title()
@@ -252,6 +257,7 @@ class Run:
 
         self.text_group.draw(screen)
         self.title_group.draw(screen)
+        pygame.display.update()
 
 
 
@@ -262,11 +268,18 @@ class Run:
         #DEBUG
 
         #FACE CARD INFO
-        debug(self.animating, name = 'animation stage', y = 0, x = 0)
+        #debug(self.animating, name = 'animation stage', y = 0, x = 0)
+        #debug(pygame.mixer.music.get_volume(), 'music volume', 1)
+        #debug(self.tarot_title_group.sprites(), 'title sprite group', 2)
+
+        #debug(self.moon.alpha, 'moon alpha', 3)
+        #debug(self.tarot.alpha, 'tarot', 4)
+        #debug(self.spacebar.alpha, 'spacebar', 5)
         #debug((cards[self.picks[0]]['name'],cards[self.picks[1]]['name'],cards[self.picks[2]]['name']), 'Cards',0)
         # debug(cards[self.picks[0]]['desc'], '1', 1)
         # debug(cards[self.picks[1]]['desc'], '2', 2)
         # debug(cards[self.picks[2]]['desc'], '3', 3)
+        
         
 
         #COVER CARD DATA

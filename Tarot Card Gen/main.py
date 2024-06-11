@@ -4,7 +4,7 @@ from settings import *
 from run import *
 import asyncio
 
- 
+
 
 
 class Game:
@@ -16,7 +16,9 @@ class Game:
         self.clock = pygame.time.Clock()
         self.run = Run()
 
+
     async def main(self):   
+        pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN])
         while True:
             # event loop
             for event in pygame.event.get():
@@ -27,8 +29,9 @@ class Game:
                     pass
                 
             self.run.update(self.screen)
-            pygame.display.update()
+            
             self.clock.tick(FPS)
+            print(self.clock.get_fps())
             await asyncio.sleep(0)
             
     

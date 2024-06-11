@@ -18,7 +18,7 @@ class CoverCard(pygame.sprite.Sprite):
         self.flips = 0
         self.time = 0
 
-        self.image_original = pygame.image.load('art/back.png')
+        self.image_original = pygame.image.load('art/back.png').convert_alpha()
         self.image = pygame.transform.scale(self.image_original, (self.width, card_height))
         self.rect = pygame.Surface.get_rect(self.image, center = (CENTER))
         
