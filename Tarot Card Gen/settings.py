@@ -44,7 +44,7 @@ sounds = {
 
 volume = {
     'music' : 0.5,
-    'sfx' : 0.5
+    'sfx' : 0.25
 }
 
 ui_dimensions = {
