@@ -25,7 +25,7 @@ class Text(pygame.sprite.Sprite):
             self.height = self.image.get_height()
             self.pos = (CENTER[0], (30*size))
             self.rect = pygame.Surface.get_rect(self.image, center = (self.pos))
-
+            
         if type == 'name':
             self.font = pygame.font.Font('art/monobit.ttf', 32*size)
             self.text = text.title()

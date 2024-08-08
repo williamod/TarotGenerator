@@ -7,14 +7,16 @@ import asyncio
 
 
 
+
 class Game:
     def __init__(self):
-         # setup
+        # setup
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH,HEIGHT))
+        self.screen = pygame.display.set_mode((WIDTH,HEIGHT), pygame.DOUBLEBUF)
         pygame.display.set_caption('')
         self.clock = pygame.time.Clock()
         self.run = Run()
+
 
 
     async def main(self):   
@@ -27,11 +29,15 @@ class Game:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     pass
-                
-            self.run.update(self.screen)
-            
+
             self.clock.tick(FPS)
-            print(self.clock.get_fps())
+            #print(self.clock.get_fps())
+            self.run.update(self.screen)
+
+            
+            
+
+            pygame.display.update()
             await asyncio.sleep(0)
             
     

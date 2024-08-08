@@ -50,8 +50,6 @@ class FaceCard(pygame.sprite.Sprite):
      
         
 
-    def update(self):
-        self.image.set_alpha(self.alpha)
 
         
         

@@ -7,7 +7,7 @@ class Moon(pygame.sprite.Sprite):
 
         self.image_original = pygame.image.load('background/2.png').convert_alpha()
         self.image = pygame.transform.scale(self.image_original,(size*50,size*50))
-        self.rect = self.image.get_rect(center = (CENTER[0] + size*35, 100))
+        self.rect = self.image.get_rect(center = (CENTER[0] + size*35, 85))
         self.alpha = 0
         self.image.set_alpha(self.alpha)
 

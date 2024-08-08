@@ -8,8 +8,6 @@ CENTER  = (WIDTH/2,HEIGHT/2)
 card_width = 120*size
 card_height = 160*size
 
-
-
 cards = {
     0 : {'name':'fool','desc':['potential', 'innocence', 'new journey'], 'path' : 'art/fool.png'},
     1 : {'name' :'magician', 'desc' : ['manifestation','creation','conduit'], 'path': 'art/magician.png'},
@@ -42,18 +40,35 @@ sounds = {
     'main'      :   'sound/main.wav',
     'move'      :   'sound/move.wav',
     'text'      :   'sound/text/wav' 
-
 }
 
 volume = {
     'music' : 0.5,
-    'fx' : 0.5
+    'sfx' : 0.5
 }
 
+ui_dimensions = {
+    1:  (320,180),
+    2:  (640,360),
+    3:  (1280,720),
+    4:  (1920,1080),
+    6:  (2560,1440)
+}
 
+screen_dimensions = {
+    1:  (640,360),
+    2:  (1280,720),
+    3:  (1920,1080),
+    4:  (2560,1440),
+    6:  (3840,2160)
+}
 
-
-
+gear_button_size = {
+    1: (50,50),
+    2: (100,100),
+    3: (150,150),
+    4: (200,200)
+}
 
 # SCREEN DIMENSIONS
 # 360p:     640x360    x1

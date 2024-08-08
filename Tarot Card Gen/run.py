@@ -5,6 +5,7 @@ from facecard import FaceCard
 from covercard import CoverCard
 from text import Text
 from moon import Moon
+from ui import *
 from settings import *
 from debug import *
 
@@ -15,27 +16,45 @@ class Run:
         #random seed
         seed(time.time())
 
+        self.clock = pygame.time.Clock()
+        self.animating = 0
+
+        self.ui_active = False
+
         #sprite groups
         self.cover_card_group = pygame.sprite.Group()
         self.face_card_group = pygame.sprite.Group()
         self.text_group = pygame.sprite.Group()
         self.title_group = pygame.sprite.Group()
         self.tarot_title_group = pygame.sprite.Group()
+        self.ui_group = pygame.sprite.Group()
+        self.gear_button_group = pygame.sprite.Group()
 
-        self.animating = 0
+        self.arrow_group = pygame.sprite.Group()
+        self.display_value_group = pygame.sprite.Group()
         
-        self.picks = [2,10,14]
-
         #starting sprites        
         self.cover_card_default = CoverCard(self.cover_card_group)
         self.tarot = Text(self.tarot_title_group, '', 0, type = 'tarot')
         self.moon = Moon(self.tarot_title_group)
         self.spacebar = Text(self.tarot_title_group, '', 0, type = 'spacebar')
+        self.gear_button_highlight = MenuButton(self.gear_button_group, 'highlight')
+        self.gear_button_front = MenuButton(self.gear_button_group, 'gear')
+
+        #pause menu
+        self.ui = UI(self.ui_group, self.arrow_group, self.display_value_group)
+        self.menu_active_cooldown = 500
+        self.cooldown_timer = 0  
+
+   
+
+        
+         
 
         #background images
-        self.bg_1 = pygame.transform.scale(pygame.image.load('background/1.png').convert_alpha(), (WIDTH,HEIGHT))
-        self.bg_3 = pygame.transform.scale(pygame.image.load('background/3.png').convert_alpha(), (WIDTH,HEIGHT))
-        self.bg_4 = pygame.transform.scale(pygame.image.load('background/4.png').convert_alpha(), (WIDTH,HEIGHT))
+        self.background = pygame.transform.scale(pygame.image.load('background/background.png').convert_alpha(), (WIDTH,HEIGHT))
+        self.background_screen = pygame.display.get_surface()
+        self.background_screen.blit(self.background, (0,0))
 
         #music
         pygame.mixer.music.load(sounds['intro'])
@@ -52,14 +71,14 @@ class Run:
                              pygame.mixer.Sound('sound/appear3.wav')]
         
         #sound volume
-        
-        self.flip_sound.set_volume(volume['fx'])
-        self.book_flip_sound.set_volume(volume['fx'])
-        self.begin_sound.set_volume(volume['fx'])
-        self.appear_sound[0].set_volume(volume['fx'])
-        self.appear_sound[1].set_volume(volume['fx'])
-        self.appear_sound[2].set_volume(volume['fx'])
-        self.appear_sound[3].set_volume(volume['fx'])
+        self.set_sxf_volume()
+        # self.flip_sound.set_volume(volume['sfx'])
+        # self.book_flip_sound.set_volume(volume['sfx'])
+        # self.begin_sound.set_volume(volume['sfx'])
+        # self.appear_sound[0].set_volume(volume['sfx'])
+        # self.appear_sound[1].set_volume(volume['sfx'])
+        # self.appear_sound[2].set_volume(volume['sfx'])
+        # self.appear_sound[3].set_volume(volume['sfx'])
 
         
     def input(self):
@@ -73,7 +92,16 @@ class Run:
             self.clear_text()
             self.animating = 9 
             self.appear_sound_picks = sample(self.appear_sound, 3)
-                
+
+    def set_sxf_volume(self):
+        self.flip_sound.set_volume(volume['sfx'])
+        self.book_flip_sound.set_volume(volume['sfx'])
+        self.begin_sound.set_volume(volume['sfx'])
+        self.appear_sound[0].set_volume(volume['sfx'])
+        self.appear_sound[1].set_volume(volume['sfx'])
+        self.appear_sound[2].set_volume(volume['sfx'])
+        self.appear_sound[3].set_volume(volume['sfx'])
+
     def draw_background(self, screen):
         screen.blit(self.bg_1, (0,0))
         screen.blit(self.bg_3, (0,0))
@@ -143,11 +171,46 @@ class Run:
         for sprite in self.tarot_title_group:
             sprite.disappear()
 
-    def animation(self):
+    def gear_button(self, screen):
+        current_time = pygame.time.get_ticks()
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_push = pygame.mouse.get_pressed()
+        if self.gear_button_highlight.rect.collidepoint(mouse_pos):
+            self.gear_button_highlight.image.set_alpha(255)
+
+            if current_time >= self.cooldown_timer + self.menu_active_cooldown:
+                if mouse_push[0] and not self.ui_active:
+                    self.ui_active = True
+                    self.cooldown_timer = pygame.time.get_ticks()
+                    return
+                if mouse_push[0] and self.ui_active:
+                    self.ui_active = False
+                    self.ui_group.clear(screen, self.background)
+                    self.cooldown_timer = pygame.time.get_ticks()
+                    return
+        
+        else:
+            self.gear_button_highlight.image.set_alpha(0)
+
+    def get_mouse_click(self):
+        current_time = pygame.time.get_ticks()
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_push = pygame.mouse.get_pressed()
+
+        for sprite in self.arrow_group:
+            if sprite.rect.collidepoint(mouse_pos) and mouse_push[0]:
+                if current_time >= self.cooldown_timer + self.menu_active_cooldown:
+                    sprite.adjust_volume()
+                    self.cooldown_timer = pygame.time.get_ticks()
+
+        
+
+    def animation(self, screen):
         if self.animating == 1:
             self.cover_card_default.active = True
             self.hide_game_title()
             pygame.mixer.music.fadeout(1000)
+            self.tarot_title_group.clear(screen, self.background)
             if self.cover_card_default.rect.width >= card_width and not self.tarot_title_group:
                 self.animating = 2
 
@@ -175,8 +238,6 @@ class Run:
                         self.animating = 5
                         self.appear_sound_picks[0].play()
                         
-                        
-        
         elif self.animating == 5:
             self.title_1.appear()
             self.desc1_1.appear()
@@ -211,9 +272,14 @@ class Run:
                 pygame.mixer.music.play(-1)
             else: 
                 self.spacebar.appear()
+                
+                
             
 
         elif self.animating == 9:
+            self.tarot_title_group.clear(screen, self.background)
+            self.title_group.clear(screen, self.background)
+            self.text_group.clear(screen, self.background)
             self.card_1.left_retun()
             self.card_3.right_retun()
             self.spacebar.disappear()
@@ -236,56 +302,104 @@ class Run:
         
 
     def update(self, screen):
-        self.input()
-        if self.animating == 0:
-            self.show_game_title()
-        if self.animating > 0:
-            self.animation()
+        self.gear_button(screen)
+        if self.ui_active:
+            self.get_mouse_click()
 
-        #update
-        if self.cover_card_group:
-            self.cover_card_group.update()
+            self.display_value_group.update()
+            self.ui_group.clear(screen, self.background)
+            self.ui_group.draw(self.ui.display_surf) 
+            
+            pygame.mixer.music.set_volume(volume['music'])
+            self.set_sxf_volume()
             
             
-        if self.face_card_group:
-            self.face_card_group.update()
-        #draw
-        self.draw_background(screen)
-        self.tarot_title_group.draw(screen)
-        self.cover_card_group.draw(screen)
-        self.face_card_group.draw(screen)
+            
+            
 
-        self.text_group.draw(screen)
-        self.title_group.draw(screen)
-        pygame.display.update()
+        else:
+            self.input()
+            
+
+            #animation
+            if self.animating == 0:
+                self.show_game_title()
+            if self.animating > 0:
+                self.animation(screen)
+
+            #update
+            if self.cover_card_group:
+                self.cover_card_group.update()
+                
+            #draw
+            
+            #screen.blit(self.background, (0,0))
+
+            if self.tarot_title_group:
+                self.tarot_title_group.draw(self.background_screen)
+            if self.cover_card_group:
+                self.cover_card_group.clear(screen, self.background)
+                self.cover_card_group.draw(screen)
+            if self.face_card_group:
+                self.face_card_group.clear(screen, self.background)
+                self.face_card_group.draw(screen)
+            if self.text_group:
+                self.text_group.draw(screen)
+            if self.title_group:
+                self.title_group.draw(screen)
+            
+
+            
+
+            if self.gear_button_group:
+                self.gear_button_group.clear(screen, self.background)
+                self.gear_button_group.draw(screen)
+
+            #DEBUG
+
+            
+          
+
+            #FACE CARD INFO
+
+
+            #debug([self.clock.tick(), int(self.clock.get_fps())], name = 'fps', y = 0, x = 0)
+            #debug(self.animating, name = 'animation stage', y = 0, x = 0)
+            #debug(pygame.mixer.music.get_volume(), 'music volume', 1)
+            #debug(self.tarot_title_group.sprites(), 'title sprite group', 2)
+
+            #debug(self.moon.alpha, 'moon alpha', 3)
+            #debug(self.tarot.alpha, 'tarot', 4)
+            #debug(self.spacebar.alpha, 'spacebar', 5)
+            #debug((cards[self.picks[0]]['name'],cards[self.picks[1]]['name'],cards[self.picks[2]]['name']), 'Cards',0)
+            #debug(cards[self.picks[0]]['desc'], '1', 1)
+            #debug(cards[self.picks[1]]['desc'], '2', 2)
+            #debug(cards[self.picks[2]]['desc'], '3', 3)
+            
+            
+
+            #COVER CARD DATA
+            #debug(self.card_cover.rect.width, 'Cover Width', 5)
+            #debug(self.card_cover.flips, 'Flips', 6)
+
+            #TIMER
+            #debug(self.card_1.fold_out(), 'Timer', 0 )
+            
+            #SPRITE GROUPS
+            
+            #debug(self.ui_group.sprites() , name = 'ui sprite', y = 1, x = 0)
+
+
+            #MOUSE
+            #mouse = pygame.mouse.get_pos()
+            #for sprite in self.tarot_title_group:
+            #    if sprite.rect.collidepoint(mouse):
+            #        sprite.image.fill((0,0,0))
+
+            #for sprite in self.title_group:
+            #    if sprite.rect.collidepoint(mouse):
+            #        sprite.image.fill((0,0,0))
 
 
 
-
-
-
-
-        #DEBUG
-
-        #FACE CARD INFO
-        #debug(self.animating, name = 'animation stage', y = 0, x = 0)
-        #debug(pygame.mixer.music.get_volume(), 'music volume', 1)
-        #debug(self.tarot_title_group.sprites(), 'title sprite group', 2)
-
-        #debug(self.moon.alpha, 'moon alpha', 3)
-        #debug(self.tarot.alpha, 'tarot', 4)
-        #debug(self.spacebar.alpha, 'spacebar', 5)
-        #debug((cards[self.picks[0]]['name'],cards[self.picks[1]]['name'],cards[self.picks[2]]['name']), 'Cards',0)
-        # debug(cards[self.picks[0]]['desc'], '1', 1)
-        # debug(cards[self.picks[1]]['desc'], '2', 2)
-        # debug(cards[self.picks[2]]['desc'], '3', 3)
-        
-        
-
-        #COVER CARD DATA
-        #debug(self.card_cover.rect.width, 'Cover Width', 5)
-        #debug(self.card_cover.flips, 'Flips', 6)
-
-        #TIMER
-        #debug(self.card_1.fold_out(), 'Timer', 0 )
-        
+            
